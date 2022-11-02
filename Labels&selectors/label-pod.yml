@@ -1,0 +1,14 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: label-pod
+  labels:
+    department: developer
+    batch: first
+
+spec:
+  containers:
+  - name: label-cont
+    image: ubuntu
+    command: ["/bin/bash", "-c", "while true; do echo Label is working!!; done"]
+    
