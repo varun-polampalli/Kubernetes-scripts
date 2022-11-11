@@ -6,7 +6,7 @@ spec:
   containers:
   - name: one
     image: centos
-    command: ["/bin/bash", "-c", "echo learning k8s volumes > /tmp/k8s.txt && sleep 3600"]
+    command: ["/bin/bash", "-c", "echo learning k8s volumes > /bharath/k8s.txt && sleep 3600"]
     volumeMounts:
     - name: my-emptydir-vol
       mountPath: "/bharath"
