@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-hostpath-pod
+spec:
+  volumes:
+  - name: my-hostpath-volume
+    hostPath:
+      path: /vars/k8s
+  containers:
+  - name: abc
+    image: centos
+    command: ["/bin/bash", "-c", "echo learning k8s volumes!!! > /bharath/k8s.txt && sleep 3600"]
+    volumeMounts:
+    - name: my-hostpath-volume
+      mountPath: /bharath
