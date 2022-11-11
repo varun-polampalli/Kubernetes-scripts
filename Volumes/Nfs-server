@@ -1,0 +1,21 @@
+sudo apt update -y
+
+sudo apt install nfs-kernel-server
+
+sudo mkdir -p /mnt/bharath
+
+sudo chown -R nobody:nogroup /mnt/bharath/
+
+sudo vim /etc/exports
+
+#insert this content to /etc/exports 
+    /mnt/bharath  *(rw,sync,no_subtree_check)
+#  if you face any security issues then use below content 
+   /mnt/bharath  *(rw,sync,no_subtree_check,insecure)
+   
+sudo exportfs -a
+
+#to check exports 
+sudo exportfs -v or showmount -e 
+     
+sudo systemctl restart nfs-kernel-server
