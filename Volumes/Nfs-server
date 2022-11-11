@@ -19,3 +19,10 @@ sudo exportfs -a
 sudo exportfs -v or showmount -e 
      
 sudo systemctl restart nfs-kernel-server
+
+
+#install NFS-Client (in Worker Nodes)
+#------------------------------------
+
+sudo apt install nfs-common -y
+showmount -e <nfs-server-ip>
