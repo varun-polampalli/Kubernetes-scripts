@@ -1,3 +1,3 @@
-# Command to print the Kubead Join Token
+# Command to print the Kubeadm Join Token
 
 `kubeadm token create --print-join-command`
