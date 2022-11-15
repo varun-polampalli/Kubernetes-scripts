@@ -1,7 +1,6 @@
 # Download the Metrics-server
 
-wget -O metricserver.yml https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-
+`wget -O metricserver.yml https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
 
 # Open the metricserver.yml under spec.args add this line
 
@@ -9,17 +8,15 @@ wget -O metricserver.yml https://github.com/kubernetes-sigs/metrics-server/relea
 
 # Run the Metrics server
 
-kubectl apply -f metricserver.yml
+`kubectl apply -f metricserver.yml`
 
-# Create one Deployment 
+# Create Deployment and apply HPA Using the Below Command 
 
-# HPA command to auto scale deployment
-
-kubectl autoscale deployment <deployment-name> --cpu-percent=10 --min=1 --max=10
+`kubectl autoscale deployment <deployment-name> --cpu-percent=10 --min=1 --max=10`
   
-# to list the hpa
+# To list the of HPA
   
-  kubectl get hpa
+`kubectl get hpa`
   
-# Now go inside the pod and perform some actions the cpu will increase and it will spin up the pods 
+# Now go inside the Pod and perform some actions the cpu will increase and it will spin up the new Pods 
   
