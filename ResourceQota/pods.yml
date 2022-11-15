@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: demo.limit
+  name: pod-limit
 spec:
   containers:
   - name: abc
@@ -15,7 +15,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: demo.request
+  name: pod-request
 spec:
   containers:
   - name: xyz
@@ -29,10 +29,10 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: memory.demo
+  name: pod-memory
 spec:
   containers:
-  - name: cont.memory
+  - name: cont-memory
     image: nginx
     resources:
       limits:
