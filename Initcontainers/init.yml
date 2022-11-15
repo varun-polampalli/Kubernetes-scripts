@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-init
+spec:
+  initContainers:
+  - name: abc
+    image: centos
+    command: ["/bin/sh", "-c", "echo Learning init containers  > /tmp/skillrary/init.txt; sleep 30"]
+    volumeMounts:
+      - name: myvol
+        mountPath: "/tmp/skillrary"
+  containers:
+  - name: xyz
+    image: centos
+    command: ["/bin/bash", "-c", "while true; do echo `cat /tmp/data/init.txt`; sleep 5; done"]
+    volumeMounts:
+      - name: myvol
+        mountPath: "/tmp/devops"
+  volumes:
+  - name: myvol
+    emptyDir: {}
