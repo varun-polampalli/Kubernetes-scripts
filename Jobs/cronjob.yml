@@ -1,0 +1,15 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+ name: pod-cronjob
+spec:
+ schedule: "* * * * *"
+ jobTemplate:
+   spec:
+     template:
+       spec:
+         containers:
+         - image: ubuntu
+           name: momo
+           command: ["/bin/bash", "-c", "echo Happy Independence Day; sleep 5"]
+         restartPolicy: Never
