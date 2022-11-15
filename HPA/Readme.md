@@ -5,8 +5,7 @@ wget -O metricserver.yml https://github.com/kubernetes-sigs/metrics-server/relea
 
 # Open the metricserver.yml under spec.args add this line
 
-- --kubelet-insecure-tls
-
+`- --kubelet-insecure-tls`
 
 # Run the Metrics server
 
