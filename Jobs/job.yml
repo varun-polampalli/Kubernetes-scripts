@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-pod
+spec:
+  template:
+    metadata:
+      name: myjob
+    spec:
+      containers:
+      - name: abc
+        image: centos:7
+        command: ["bin/bash", "-c", "echo Hello-Devils; sleep 5"]
+      restartPolicy: Never
