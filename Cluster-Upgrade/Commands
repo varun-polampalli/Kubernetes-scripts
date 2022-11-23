@@ -1,0 +1,99 @@
+# Upgrade Cluster (1 Master and 2 worker nodes)
+
+# Upgrading Controlplane
+
+sudo kubeadm upgrade plan #(to see the current and latest Version)
+
+kubectl drain master --ignore-daemonsets  #(to move the workloads to different nodes and make master as unschedulabel)
+
+sudo apt update                    #(to update the server)
+apt-cache madison kubeadm          #(to get all the version list)
+
+sudo apt-mark unhold kubeadm     
+
+sudo apt-get update 
+
+sudo apt-get install -y kubeadm=1.22.0-00       #( installing the kubeadm Version to Upgrade)
+
+sudo apt-mark hold kubeadm
+
+
+kubeadm version                        #(to see the kubeadm version)
+
+sudo kubeadm upgrade apply v1.22.0       #(Upgrading the kubeadm Version which we Installed )
+
+sudo apt-get install -y kubelet=1.22.0-00     #( installing the kubelet Version to Upgrade)
+
+sudo apt-get upgrade -y kubelet=1.22.0-00     #(Upgrading the kubelet Version which we Installed )
+
+systemctl daemon-reload                    #(Reloading the daemon)
+
+systemctl restart kubelet                #(Restart kubelet)
+
+kubectl uncordon master                #(make master again scheduleable)   
+
+
+         
+
+# Upgrade Worker Nodes
+
+#connect to node1
+
+kubectl drain node1 --ignore-daemonsets
+
+#sudo apt-get install -y kubeadm=1.22.0-00   #(if it is not working means use below command)
+
+sudo apt-get install -y kubeadm=1.22.0-00 --allow-change-held-packages 
+
+sudo kubeadm upgrade node
+
+sudo apt-get install -y kubelet=1.22.0-00 
+
+#sudo apt-get upgrade -y kubelet=1.22.0-00    #(if it is not working means use below command)
+
+sudo apt-get install -y kubelet=1.22.0-00 --allow-change-held-packages
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart kubelet
+
+#Check the updates in master Using
+
+kubectl get nodes
+
+kubectl uncordon node1
+
+
+
+         
+
+# Upgrade Worker Nodes
+
+#connect to node2
+
+kubectl drain node2 --ignore-daemonsets
+
+#sudo apt-get install -y kubeadm=1.22.0-00   #(if it is not working means use below command)
+
+sudo apt-get install -y kubeadm=1.22.0-00 --allow-change-held-packages 
+
+sudo kubeadm upgrade node
+
+sudo apt-get install -y kubelet=1.22.0-00 
+
+#sudo apt-get upgrade -y kubelet=1.22.0-00    #(if it is not working means use below command)
+
+sudo apt-get install -y kubelet=1.22.0-00 --allow-change-held-packages
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart kubelet
+
+#Check the updates in master Using
+
+kubectl get nodes
+
+kubectl uncordon node2
+
+
+
