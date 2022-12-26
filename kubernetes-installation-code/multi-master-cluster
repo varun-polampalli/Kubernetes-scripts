@@ -1,0 +1,92 @@
+# Launch 4 instances 
+# 1 is for --> Loadbalancer ubuntu(os) t2.micro
+# 3 for k8s-cluster --> kmaster1,kmaster2,knode1 ubuntu(os) t2.medium
+
+# Connect to Loadbalancer node and  Install Haproxy
+apt update && apt install -y haproxy
+
+# Configure haproxy
+# Append the below lines to /etc/haproxy/haproxy.cfg
+
+frontend kubernetes-frontend
+    bind <private-ip-of-load-balancer>:6443
+    mode tcp
+    option tcplog
+    default_backend kubernetes-backend
+
+backend kubernetes-backend
+    mode tcp
+    option tcp-check
+    balance roundrobin
+    server kmaster1 <master1-private-ip>:6443 check fall 3 rise 2
+    server kmaster2 <master2-private-ip>:6443 check fall 3 rise 2
+    
+    
+
+# Restart haproxy service
+systemctl restart haproxy
+
+
+# On all kubernetes nodes (kmaster1, kmaster2, knode1) install k8s
+# =================================================================
+
+# Swap memory
+swapoff -a
+
+# Install Docker
+
+sudo apt-get update
+
+sudo apt-get install -y\
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# Install Kubernetes
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+#sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-get install -y kubelet=1.21.1-00 kubeadm=1.21.1-00 kubectl=1.21.1-00 #--allow-change-held-packages
+sudo apt-mark hold kubelet kubeadm kubectl
+
+# Run kubeadm init command on (master1)
+kubeadm init --control-plane-endpoint="<priv-ip-load-balancer>:6443" --upload-certs --apiserver-advertise-address=<master1-priv-ip> --pod-network-cidr=192.168.0.0/16
+
+
+# Join other nodes to the cluster (kmaster2 & kworker1)
+#========================================================
+
+Use the respective kubeadm join commands you copied from the output of kubeadm init command on the first master.
+
+IMPORTANT: You also need to pass --apiserver-advertise-address to the join command when you join the other master node.
+# master join command will look like this...
+( kubeadm join 172.31.14.101:6443 --token y8wftt.amhb0gz3yzdk263j \
+        --discovery-token-ca-cert-hash sha256:c4aa164d824ca37d6cc0341b808c25abdd9d18aa1e83f08ef78043eaceb193f9 \
+        --control-plane --certificate-key b6e39f591e3fc13bcf935235858e2ca07617d27b49ee6b1df63ec2dba042be6c --apiserver-advertise-address=<kmaster2-priv-ip>
+)
+
+#Run this as a Ubuntu user
+
+mkdir -p $HOME/.kube
+
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+# CNI Plugin Installation(calico):
+kubectl apply -f https://docs.projectcalico.org/v3.15/manifests/calico.yaml
+
