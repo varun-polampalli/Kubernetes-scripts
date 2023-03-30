@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-app-with-adapter
+spec:
+  containers:
+  - name: app
+    image: node:14.16.0-alpine3.10
+    command: ["sh", "-c", "while true; do echo $(hostname) - $(date) - $(date +%s) | tee -a /app/logs/node-app.log; sleep 1; done"]
+    volumeMounts:
+    - name: app-logs
+      mountPath: /app/logs
+  - name: adapter
+    image: alpine:3.10
+    command: ["sh", "-c", "tail -n +0 -f /app/logs/node-app.log | awk '{print \"NODE - \" $0}' | tee -a /app/logs/node-app-adapter.log"]
+    volumeMounts:
+    - name: app-logs
+      mountPath: /app/logs
+  volumes:
+  - name: app-logs
+    emptyDir: {}
+
+
+1) Copy the above YAML manifest into a file named node.yml.
+
+2) Apply the YAML manifest by running the following command
+kubectl apply -f node.yml
+
+3) Check the status of the Pod by running
+kubectl get pods
+
+4) Once the Pod is running, you can view the logs of the adapter container using the following command
+kubectl logs node-app-with-adapter -c adapter
+
+5) You can also view the logs of the application container using the following command
+kubectl logs node-app-with-adapter -c app
+
