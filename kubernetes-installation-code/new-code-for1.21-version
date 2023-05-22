@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Update the system
+sudo apt update
+sudo apt upgrade -y
+
+# Install container runtime (Docker)
+sudo apt install -y docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Install kubeadm, kubelet, and kubectl
+sudo apt install -y apt-transport-https ca-certificates curl
+sudo curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+sudo apt install -y kubeadm=1.21.1-00 kubelet=1.21.1-00 kubectl=1.21.1-00
+sudo apt-mark hold kubeadm kubelet kubectl
+
+# Initialize the cluster
+sudo kubeadm init 
+
+# Configure kubectl for the current user
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Install a pod network (weavenet in this example)
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
