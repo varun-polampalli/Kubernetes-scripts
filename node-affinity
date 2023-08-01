@@ -1,3 +1,7 @@
+To label nodes :
+-------------------
+kubectl label nodes <node-name> key=value
+
 apiVersion: v1
 kind: Pod
 metadata:
